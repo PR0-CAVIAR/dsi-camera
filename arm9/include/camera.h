@@ -33,6 +33,9 @@ bool cameraDeactivate(Camera cam);
 // Starts transfer from the camera to the specified RAM/VRAM using NDMA 1
 void cameraTransferStart(u16 *dst, CaptureMode mode);
 
+// Enables the NDMA 1 completion IRQ (IRQ_NDMA1) for transfers started after this
+void cameraTransferSetIrq(bool enable);
+
 // Stops camera transfer
 void cameraTransferStop(void);
 

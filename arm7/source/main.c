@@ -67,9 +67,9 @@ int main() {
 	touchInit();
 	touchStartServer(80, MAIN_THREAD_PRIO);
 
-	// // Set up sound and mic driver
-	// soundStartServer(MAIN_THREAD_PRIO-0x10);
-	// micStartServer(MAIN_THREAD_PRIO-0x18);
+	// Set up sound and mic driver
+	soundStartServer(MAIN_THREAD_PRIO-0x10);
+	micStartServer(MAIN_THREAD_PRIO-0x18);
 
 	// // Set up wireless manager
 	// wlmgrStartServer(MAIN_THREAD_PRIO-8);

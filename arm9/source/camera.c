@@ -7,6 +7,7 @@
 
 Camera activeCamera    = CAM_NONE;
 CaptureMode activeMode = CAPTURE_MODE_PREVIEW;
+bool transferIrq       = false;
 
 bool cameraInit() {
 	REG_SCFG_CLK |= BIT(2); // CamInterfaceClock = ON
@@ -80,8 +81,10 @@ void cameraTransferStart(u16 *dst, CaptureMode mode) {
 	REG_NDMA1TCNT = (preview ? 256 * 192 : 640 * 480) / 2; // total length in words
 	REG_NDMA1WCNT = preview ? 512 : 320;                   // block length in words
 	REG_NDMA1BCNT = 2;                                     // timing interval or so
-	REG_NDMA1CNT  = 0x8B044000;                            // start camera DMA
+	REG_NDMA1CNT  = 0x8B044000 | (transferIrq ? BIT(30) : 0); // start camera DMA
 }
+
+void cameraTransferSetIrq(bool enable) { transferIrq = enable; }
 
 void cameraTransferStop() { REG_CAM_CNT &= ~BIT(15); }
 

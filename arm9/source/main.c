@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "lodepng.h"
 #include "version.h"
+#include "video.h"
 
 #include <dirent.h>
 #include <fat.h>
@@ -52,8 +53,9 @@ int main(int argc, char **argv) {
 	if(fatInited) {
 		mkdir("/DCIM", 0777);
 		mkdir("/DCIM/100DSI00", 0777);
+		mkdir(VIDEO_DIR, 0777);
 	} else {
-		printf("FAT init failed, photos cannot\nbe saved.\n");
+		printf("FAT init failed, photos and\nvideos cannot be saved.\n");
 	}
 
 	printf("Initializing...\n");
@@ -64,9 +66,10 @@ int main(int argc, char **argv) {
 	cameraActivate(camera);
 
 	if(fatInited)
-		printf("\nA to swap, L/R to take picture\n");
+		printf("\nA to swap, L/R to take picture\nSELECT to record video\n");
 	else
 		printf("\nA to swap\n");
+	printf("START to exit\n");
 
 	while(1) {
 		u16 pressed;
@@ -136,6 +139,17 @@ int main(int argc, char **argv) {
 			free(rgb);
 
 			printf("Done!\nSaved to:\n%s\n\n", imgName);
+		} else if(pressed & KEY_SELECT) {
+			if(!fatInited) {
+				printf("FAT init failed, can't record\n");
+				continue;
+			}
+
+			if(videoRecord(camera, bgGetGfxPtr(bg3Main)) == VIDEO_EXIT) {
+				cameraDeactivate(camera);
+				return 0;
+			}
+			printf("A to swap, L/R to take picture\nSELECT to record video\nSTART to exit\n");
 		} else if(pressed & KEY_START) {
 			// Disable camera so the light turns off
 			cameraDeactivate(camera);
